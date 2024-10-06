@@ -28,7 +28,7 @@ print(solusi)
 
 # Soal 3
 from itertools import permutations
-solusi = list(permutations(range(1,4)))
+solusi = list(permutations(range(1,9)))
 indexOfRepresentation = random.randint(0, len(solusi)-1)
 print(solusi[indexOfRepresentation])
 
