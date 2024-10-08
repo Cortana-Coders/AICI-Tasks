@@ -1,49 +1,69 @@
 # Soal 1
 import random
-def representasiBiner(jumlahBit):
-    ret = []
-    for _ in range(jumlahBit):
-        ret.append(random.randint(0, 1))
-    return ret
+# def representasiBiner(jumlahBit):
+#     ret = []
+#     for _ in range(jumlahBit):
+#         ret.append(random.randint(0, 1))
+#     return ret
 
-jumlahBit = 8
-solusi = representasiBiner(jumlahBit)
-print(solusi)
+# jumlahBit = 8
+# solusi = representasiBiner(jumlahBit)
+# print(solusi)
 
-# Soal 2
-def representasiDiskrit(variables):
-    ret = []
-    for i in range(len(variables)):
-        ret.append(random.randint(variables[i][0], variables[i][1]))
-    return ret
+# # Soal 2
+# def representasiDiskrit(variables):
+#     ret = []
+#     for i in range(len(variables)):
+#         ret.append(random.randint(variables[i][0], variables[i][1]))
+#     return ret
 
-variables = [
-    [1, 5],
-    [1, 8],
-    [1, 15],
-    [1, 3]
-]
-solusi = representasiDiskrit(variables)
-print(solusi)
+# variables = [
+#     [1, 5],
+#     [1, 8],
+#     [1, 15],
+#     [1, 3]
+# ]
+# solusi = representasiDiskrit(variables)
+# print(solusi)
 
 # Soal 3
+# from itertools import permutations
+# solusi = list(permutations(range(1,7)))
+# indexOfRepresentation = random.randint(0, len(solusi)-1)
+# print(solusi[indexOfRepresentation])
+
+
 from itertools import permutations
-solusi = list(permutations(range(1,9)))
+solusi = list(permutations(range(0,7)))
 indexOfRepresentation = random.randint(0, len(solusi)-1)
-print(solusi[indexOfRepresentation])
+# Matrik jarak antara setiap titik 0-1
 
+distance = [
+    [0, 1, 2, 3, 4, 5],
+    [0, 1, 2, 3, 4, 5],
+    [0, 1, 2, 3, 4, 5],
+    [0, 1, 2, 3, 4, 5],
 
-# Soal 4
-def representasiReal(variables):
-    ret = []
-    for i in range(len(variables)):
-        ret.append(random.uniform(variables[i][0], variables[i][1]))
-    return ret
-
-variables = [
-    [5, 7.49],
-    [7.5, 12.49],
-    [12.5, 15]
 ]
-solusi = representasiReal(variables)
-print(solusi)
+
+for combination in distance:
+    
+    print(distance)
+    
+# print(solusi[indexOfRepresentation])
+
+
+# # Soal 4
+# def representasiReal(variables):
+#     ret = []
+#     for i in range(len(variables)):
+#         ret.append(random.uniform(variables[i][0], variables[i][1]))
+#     return ret
+
+# variables = [
+#     [5, 7.49],
+#     [7.5, 12.49],
+#     [12.5, 15]
+# ]
+# solusi = representasiReal(variables)
+# print(solusi)
