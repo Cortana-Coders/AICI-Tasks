@@ -13,7 +13,7 @@ data_json = {
 }
 filename = 'superindo_locations.json'
 
-url = 'https://www.superindo.co.id/hubungi-kami/lokasi-superindo'
+url = 'https://www.superindo.co.id/hubungi-kami/lokasi-superindo/'
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3'    
