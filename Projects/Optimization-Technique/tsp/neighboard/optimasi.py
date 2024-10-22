@@ -38,6 +38,8 @@ solusi = list(permutations(range(0,7)))
 indexOfRepresentation = random.randint(0, len(solusi)-1)
 # Matrik jarak antara setiap titik 0-1
 
+
+# matriks jarak
 distance = [
     [0, 1, 2, 3, 4, 5],
     [0, 1, 2, 3, 4, 5],
@@ -46,8 +48,10 @@ distance = [
 
 ]
 
+# Matrik jarak
+# Untuk kasus terserah
+
 for combination in distance:
-    
     print(distance)
     
 # print(solusi[indexOfRepresentation])

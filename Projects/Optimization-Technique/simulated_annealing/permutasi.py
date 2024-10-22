@@ -1,6 +1,5 @@
 import random
 import math
-import itertools
 
 class SimulatedAnnealing:
     def __init__(self, components, numOfInitSolution, maxIter, stoppingValue, minTemp):
@@ -9,47 +8,97 @@ class SimulatedAnnealing:
         self.maxIter = maxIter
         self.stoppingValue = stoppingValue
         self.minTemp = minTemp
+        self.best_solutions = []
 
     def getSolution(self, permutation):
-        # Example evaluation function: sum of ASCII values of component names
-        return sum(sum(ord(char) for char in component) for component in permutation)
+        # Menggunakan random seed berbeda setiap kali evaluasi
+        random.seed() 
+        total = sum(len(comp) for comp in permutation)
+        return total + random.uniform(-10, 10)  # Memperbesar rentang variasi
 
-    def getInitTemperature(self):
-        ret = 0
-        for _ in range(self.numOfInitSolution):
-            permutation = random.sample(self.components, len(self.components))
-            solution = self.getSolution(permutation)
-            ret += solution
-        return ret / self.numOfInitSolution
+    def getRandomPermutation(self):
+        # Memastikan random seed berbeda setiap pemanggilan
+        random.seed()
+        permutation = []
+        indices = []
+        for i, component_list in enumerate(self.components):
+            idx = random.randint(0, len(component_list)-1)
+            permutation.append(self.components[i][idx])
+            indices.append(idx + 1)
+        return permutation, indices
 
-    def getCandidate(self):
-        return random.sample(self.components, len(self.components))
+    def mainSA(self, num_runs=5):
+        random.seed()  # Reset random seed di awal proses
+        all_solutions = []
+        
+        for run in range(num_runs):
+            temperature = 1000 * random.uniform(0.5, 1.5)  # Temperatur awal yang lebih tinggi dan bervariasi
+            solution, current_indices = self.getRandomPermutation()
+            solutionVal = self.getSolution(solution)
+            
+            best_solution = solution.copy()
+            best_indices = current_indices.copy()
+            best_value = solutionVal
+            
+            iterations = 0
+            while temperature > self.minTemp and iterations < random.randint(50, 150):  # Iterasi random
+                iterations += 1
+                for _ in range(self.maxIter):
+                    candidate, candidate_indices = self.getRandomPermutation()
+                    candidateVal = self.getSolution(candidate)
+                    deltaE = candidateVal - solutionVal
+                    
+                    # Meningkatkan probabilitas penerimaan solusi yang lebih buruk
+                    if deltaE < 0 or random.random() < math.exp(-deltaE / (temperature + 1)):
+                        solution = candidate.copy()
+                        current_indices = candidate_indices.copy()
+                        solutionVal = candidateVal
+                        
+                        if solutionVal < best_value:
+                            best_solution = solution.copy()
+                            best_indices = current_indices.copy()
+                            best_value = solutionVal
 
-    def mainSA(self):
-        temperature = self.getInitTemperature()
-        solution = random.sample(self.components, len(self.components))
-        solutionVal = self.getSolution(solution)
+                temperature *= random.uniform(0.8, 0.98)  # Cooling rate yang bervariasi
+                
+                # Meningkatkan probabilitas random restart
+                if random.random() < 0.2:
+                    solution, current_indices = self.getRandomPermutation()
+                    solutionVal = self.getSolution(solution)
 
-        while temperature > self.stoppingValue:
-            for _ in range(self.maxIter):
-                candidate = self.getCandidate()
-                candidateVal = self.getSolution(candidate)
-                deltaE = candidateVal - solutionVal
-                metropolis = math.exp(-deltaE / temperature)
+            all_solutions.append((best_solution.copy(), best_indices.copy(), best_value))
+            print(f"\nHasil Run ke-{run+1}:")
+            print("Permutasi =", best_indices)
+            print("Kombinasi Komponen:")
+            for i, comp in enumerate(best_solution):
+                print(f"{i+1}. {comp}")
+            print("Nilai Solusi:", best_value)
+            print("-" * 50)
 
-                if deltaE <= 0 or random.uniform(0, 1) < metropolis:
-                    solution, solutionVal = candidate, candidateVal
-            if solutionVal < self.stoppingValue and temperature <= self.minTemp:
-                print(solution, solutionVal)
-                break
-            else:
-                temperature = 0.8 * temperature
+        # Pilih solusi terbaik dari semua run
+        best_overall = min(all_solutions, key=lambda x: x[2])
+        print("\nSolusi Terbaik Keseluruhan:")
+        print("Permutasi =", best_overall[1])
+        print("Kombinasi Komponen:")
+        for i, comp in enumerate(best_overall[0]):
+            print(f"{i+1}. {comp}")
+        print("Nilai Solusi:", best_overall[2])
+        
+        return best_overall[0], best_overall[2]
 
-components = ["Monitor", "RAM", "CPU", "GPU", "Motherboard", "Power Supply", "SSD", "HDD", "Case", "Cooling Fan"]
-numOfInitSolution = 4
-maxIter = 5
-stoppingValue = 0.005
-minTemp = 1
+# Data komponen
+components = [
+    ["Monitor Alienware AW34QWD", "Monitor Samsung Odysey 34WAQ", "Monitor Benq 24O14N", "Monitor Acer 38ST21MKQ"],
+    ["RAM Samsung 32x2", "RAM Asus Daxa 16x2", "RAM MSI G4800 32x2", "RAM MSI QWAD10 64x2"],
+    ["Intel I9 16200HK CPU", "Intel 13 11200X", "Intel I7 13200HK"]
+]
 
-run = SimulatedAnnealing(components, numOfInitSolution, maxIter, stoppingValue, minTemp)
-run.mainSA()
+# Parameter yang lebih sesuai untuk menghasilkan variasi
+numOfInitSolution = 5  # Lebih banyak solusi awal
+maxIter = 15  # Lebih banyak iterasi per temperature
+stoppingValue = 0.0001  # Nilai stopping yang lebih kecil
+minTemp = 0.01  # Temperatur minimal yang lebih kecil
+
+# Jalankan algoritma
+sa = SimulatedAnnealing(components, numOfInitSolution, maxIter, stoppingValue, minTemp)
+solution, value = sa.mainSA(num_runs=5)
