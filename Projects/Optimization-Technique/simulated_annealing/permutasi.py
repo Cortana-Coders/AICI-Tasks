@@ -1,104 +1,83 @@
 import random
-import math
+import sys
+from itertools import permutations
 
 class SimulatedAnnealing:
-    def __init__(self, components, numOfInitSolution, maxIter, stoppingValue, minTemp):
-        self.components = components
+    def __init__(self, distanceLibrary, numOfInitSolution, maxIter, stoppingValue, minTemp):
+        self.distanceLibrary = distanceLibrary
         self.numOfInitSolution = numOfInitSolution
         self.maxIter = maxIter
         self.stoppingValue = stoppingValue
         self.minTemp = minTemp
         self.best_solutions = []
 
-    def getSolution(self, permutation):
-        # Menggunakan random seed berbeda setiap kali evaluasi
-        random.seed() 
-        total = sum(len(comp) for comp in permutation)
-        return total + random.uniform(-10, 10)  # Memperbesar rentang variasi
+    def getDistance(self, a, b):
+        if (a, b) in self.distanceLibrary:
+            return self.distanceLibrary[(a, b)]
+        elif (b, a) in self.distanceLibrary:
+            return self.distanceLibrary[(b, a)]
+        else:
+            return 0
 
-    def getRandomPermutation(self):
-        # Memastikan random seed berbeda setiap pemanggilan
-        random.seed()
-        permutation = []
-        indices = []
-        for i, component_list in enumerate(self.components):
-            idx = random.randint(0, len(component_list)-1)
-            permutation.append(self.components[i][idx])
-            indices.append(idx + 1)
-        return permutation, indices
+    def randomSolution(self):
+        solusi = list(permutations(range(0, 7)))
+        random_combination = random.choice(solusi)
 
-    def mainSA(self, num_runs=5):
-        random.seed()  # Reset random seed di awal proses
-        all_solutions = []
+        total_distance = 0
+        for i in range(len(random_combination) - 1):
+            total_distance += self.getDistance(random_combination[i], random_combination[i + 1])
+
+        total_distance += self.getDistance(random_combination[-1], 0)
+
+        print(f"Solusi Awal: {random_combination}, Total Jarak: {total_distance}")
+        return random_combination
+
+    def changeTwoElement(self, neighbors):
+        twoElement = 2
+        randomIndex = set()
+        while len(randomIndex) < twoElement:
+            randomIndex.add(random.randint(0, len(neighbors)-1))
         
-        for run in range(num_runs):
-            temperature = 1000 * random.uniform(0.5, 1.5)  # Temperatur awal yang lebih tinggi dan bervariasi
-            solution, current_indices = self.getRandomPermutation()
-            solutionVal = self.getSolution(solution)
-            
-            best_solution = solution.copy()
-            best_indices = current_indices.copy()
-            best_value = solutionVal
-            
-            iterations = 0
-            while temperature > self.minTemp and iterations < random.randint(50, 150):  # Iterasi random
-                iterations += 1
-                for _ in range(self.maxIter):
-                    candidate, candidate_indices = self.getRandomPermutation()
-                    candidateVal = self.getSolution(candidate)
-                    deltaE = candidateVal - solutionVal
-                    
-                    # Meningkatkan probabilitas penerimaan solusi yang lebih buruk
-                    if deltaE < 0 or random.random() < math.exp(-deltaE / (temperature + 1)):
-                        solution = candidate.copy()
-                        current_indices = candidate_indices.copy()
-                        solutionVal = candidateVal
-                        
-                        if solutionVal < best_value:
-                            best_solution = solution.copy()
-                            best_indices = current_indices.copy()
-                            best_value = solutionVal
-
-                temperature *= random.uniform(0.8, 0.98)  # Cooling rate yang bervariasi
-                
-                # Meningkatkan probabilitas random restart
-                if random.random() < 0.2:
-                    solution, current_indices = self.getRandomPermutation()
-                    solutionVal = self.getSolution(solution)
-
-            all_solutions.append((best_solution.copy(), best_indices.copy(), best_value))
-            print(f"\nHasil Run ke-{run+1}:")
-            print("Permutasi =", best_indices)
-            print("Kombinasi Komponen:")
-            for i, comp in enumerate(best_solution):
-                print(f"{i+1}. {comp}")
-            print("Nilai Solusi:", best_value)
-            print("-" * 50)
-
-        # Pilih solusi terbaik dari semua run
-        best_overall = min(all_solutions, key=lambda x: x[2])
-        print("\nSolusi Terbaik Keseluruhan:")
-        print("Permutasi =", best_overall[1])
-        print("Kombinasi Komponen:")
-        for i, comp in enumerate(best_overall[0]):
-            print(f"{i+1}. {comp}")
-        print("Nilai Solusi:", best_overall[2])
+        randomIndex = list(randomIndex)
         
-        return best_overall[0], best_overall[2]
+        # Tukar kedua elemen
+        temp = neighbors[randomIndex[0]]
+        neighbors[randomIndex[0]] = neighbors[randomIndex[1]]
+        neighbors[randomIndex[1]] = temp
+
+        return neighbors
+
+    def mainSA(self):
+        temperature = self.getInitTemprature()
+        solutionVals = random.uniform(self.varRanges[0], self.varRanges[1])
+        solution = self.getSolution(solutionVals)
+        candidate = self.getCandidate(self.varRanges)
+        varRanges = self.getNewVarRanges(candidate)
 
 # Data komponen
-components = [
-    ["Monitor Alienware AW34QWD", "Monitor Samsung Odysey 34WAQ", "Monitor Benq 24O14N", "Monitor Acer 38ST21MKQ"],
-    ["RAM Samsung 32x2", "RAM Asus Daxa 16x2", "RAM MSI G4800 32x2", "RAM MSI QWAD10 64x2"],
-    ["Intel I9 16200HK CPU", "Intel 13 11200X", "Intel I7 13200HK"]
-]
+distanceLibrary = {
+    (0, 1): 4.4, (0, 2): 1.8, (0, 3): 3.4, (0, 4): 0.65, (0, 5): 0.70, (0, 6): 36,
+    (1, 2): 3.3, (1, 3): 2.2, (1, 4): 4.9, (1, 5): 4, (1, 6): 34,
+    (2, 3): 2, (2, 4): 2.9, (2, 5): 1.9, (2, 6): 35,
+    (3, 4): 3.7, (3, 5): 2.8, (3, 6): 35,
+    (4, 5): 0.9, (4, 6): 37,
+    (5, 6): 36
+}
 
-# Parameter yang lebih sesuai untuk menghasilkan variasi
-numOfInitSolution = 5  # Lebih banyak solusi awal
-maxIter = 15  # Lebih banyak iterasi per temperature
-stoppingValue = 0.0001  # Nilai stopping yang lebih kecil
-minTemp = 0.01  # Temperatur minimal yang lebih kecil
+varRanges = [-5, 5]
+numOfInitSolution = 5
+maxIter = 15
+stoppingValue = 0.0001
+minTemp = 0.01
 
-# Jalankan algoritma
-sa = SimulatedAnnealing(components, numOfInitSolution, maxIter, stoppingValue, minTemp)
-solution, value = sa.mainSA(num_runs=5)
+run = SimulatedAnnealing(distanceLibrary, numOfInitSolution, maxIter, stoppingValue, minTemp)
+initial_solution = run.randomSolution()
+changed_solution = run.changeTwoElement(list(initial_solution))
+
+total_distance_changed = 0
+for i in range(len(changed_solution) - 1):
+    total_distance_changed += run.getDistance(changed_solution[i], changed_solution[i + 1])
+
+total_distance_changed += run.getDistance(changed_solution[-1], 0)
+
+print(f"Solusi Two Element: {changed_solution}, Nilai Objektif: {total_distance_changed}")

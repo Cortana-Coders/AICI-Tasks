@@ -1,5 +1,6 @@
 #untuk kos ke mana - ke mana - ke mana
 import random
+import sys
 from itertools import permutations
 
 distanceLibrary = {
@@ -20,16 +21,21 @@ def get_distance(a, b):
     else:
         return 0  # Default jika tidak ada di library
 
-# Semua kombinasi permutasi dari 0-6
 solusi = list(permutations(range(0, 7)))
 
-# Loop melalui setiap permutasi dan hitung total jarak, termasuk kembali ke titik 0
-for combination in solusi:
-    total_distance = 0
-    for i in range(len(combination) - 1):
-        total_distance += get_distance(combination[i], combination[i + 1])
-    
-    # Tambahkan jarak untuk kembali ke titik awal (0)
-    total_distance += get_distance(combination[-1], 0)
+random_combination = random.choice(solusi)
 
-    print(f"Trip: {combination}, Total Jarak: {total_distance}")
+total_distance = 0
+for i in range(len(random_combination) - 1):
+    total_distance += get_distance(random_combination[i], random_combination[i + 1])
+
+
+# for combination in solusi:
+#     total_distance = 0
+#     for i in range(len(combination) - 1):
+#         total_distance += get_distance(combination[i], combination[i + 1])
+    
+    total_distance += get_distance(random_combination[-1], 0)
+
+    print(f"Trip: {random_combination}, Total Jarak: {total_distance}")
+    sys.exit()
