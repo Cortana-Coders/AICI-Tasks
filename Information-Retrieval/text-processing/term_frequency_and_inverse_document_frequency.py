@@ -1,0 +1,3 @@
+# Import Library untuk Stemming
+from Sastrawi.Stemmer.StemmerFactory import StemmerFactory
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
