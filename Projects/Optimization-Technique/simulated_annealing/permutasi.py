@@ -1,15 +1,17 @@
 import random
-import sys
 from itertools import permutations
+from math import exp
 
 class SimulatedAnnealing:
-    def __init__(self, distanceLibrary, numOfInitSolution, maxIter, stoppingValue, minTemp):
+    def __init__(self, distanceLibrary, varRanges, numOfInitSolution, maxIter, stoppingValue, minTemp):
         self.distanceLibrary = distanceLibrary
+        self.varRanges = varRanges
         self.numOfInitSolution = numOfInitSolution
         self.maxIter = maxIter
         self.stoppingValue = stoppingValue
         self.minTemp = minTemp
-        self.best_solutions = []
+        self.best_solution = None
+        self.best_distance = float('inf')
 
     def getDistance(self, a, b):
         if (a, b) in self.distanceLibrary:
@@ -29,8 +31,7 @@ class SimulatedAnnealing:
 
         total_distance += self.getDistance(random_combination[-1], 0)
 
-        print(f"Solusi Awal: {random_combination}, Total Jarak: {total_distance}")
-        return random_combination
+        return random_combination, total_distance
 
     def changeTwoElement(self, neighbors):
         twoElement = 2
@@ -40,7 +41,7 @@ class SimulatedAnnealing:
         
         randomIndex = list(randomIndex)
         
-        # Tukar kedua elemen
+        # Swap the two elements
         temp = neighbors[randomIndex[0]]
         neighbors[randomIndex[0]] = neighbors[randomIndex[1]]
         neighbors[randomIndex[1]] = temp
@@ -48,11 +49,41 @@ class SimulatedAnnealing:
         return neighbors
 
     def mainSA(self):
-        temperature = self.getInitTemprature()
-        solutionVals = random.uniform(self.varRanges[0], self.varRanges[1])
-        solution = self.getSolution(solutionVals)
-        candidate = self.getCandidate(self.varRanges)
-        varRanges = self.getNewVarRanges(candidate)
+        temperature = 1000  # Initial temperature
+        solution, solution_distance = self.randomSolution()
+        self.best_solution = solution
+        self.best_distance = solution_distance
+
+        print(f"Initial Solution: {solution}, Objective Value: {solution_distance}")
+
+        neighbor = self.changeTwoElement(list(solution))
+        neighbor_distance = 0
+        for j in range(len(neighbor) - 1):
+            neighbor_distance += self.getDistance(neighbor[j], neighbor[j + 1])
+        neighbor_distance += self.getDistance(neighbor[-1], 0)
+
+        print(f"Solution 2 Element: {neighbor}, Objective Value: {neighbor_distance}")
+
+        while temperature > self.stoppingValue:
+            for i in range(self.maxIter):
+                neighbor = self.changeTwoElement(list(solution))
+                neighbor_distance = 0
+                for j in range(len(neighbor) - 1):
+                    neighbor_distance += self.getDistance(neighbor[j], neighbor[j + 1])
+                neighbor_distance += self.getDistance(neighbor[-1], 0)
+
+                deltaE = neighbor_distance - solution_distance
+                metropolis = exp(-deltaE / temperature)
+
+                if deltaE <= 0 or random.uniform(0, 1) < metropolis:
+                    solution, solution_distance = neighbor, neighbor_distance
+
+                if solution_distance < self.best_distance:
+                    self.best_solution, self.best_distance = solution, solution_distance
+
+            temperature *= 0.8  # Cooling schedule
+
+        print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
 
 # Data komponen
 distanceLibrary = {
@@ -70,14 +101,5 @@ maxIter = 15
 stoppingValue = 0.0001
 minTemp = 0.01
 
-run = SimulatedAnnealing(distanceLibrary, numOfInitSolution, maxIter, stoppingValue, minTemp)
-initial_solution = run.randomSolution()
-changed_solution = run.changeTwoElement(list(initial_solution))
-
-total_distance_changed = 0
-for i in range(len(changed_solution) - 1):
-    total_distance_changed += run.getDistance(changed_solution[i], changed_solution[i + 1])
-
-total_distance_changed += run.getDistance(changed_solution[-1], 0)
-
-print(f"Solusi Two Element: {changed_solution}, Nilai Objektif: {total_distance_changed}")
+run = SimulatedAnnealing(distanceLibrary, varRanges, numOfInitSolution, maxIter, stoppingValue, minTemp)
+run.mainSA()
