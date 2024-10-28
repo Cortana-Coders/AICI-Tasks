@@ -3,8 +3,9 @@ from itertools import permutations
 from math import exp
 
 class SimulatedAnnealing:
-    def __init__(self, distanceLibrary, numOfInitSolution, maxIter, stoppingValue, minTemp):
+    def __init__(self, distanceLibrary, varRanges, numOfInitSolution, maxIter, stoppingValue, minTemp):
         self.distanceLibrary = distanceLibrary
+        self.varRanges = varRanges
         self.numOfInitSolution = numOfInitSolution
         self.maxIter = maxIter
         self.stoppingValue = stoppingValue
@@ -53,7 +54,7 @@ class SimulatedAnnealing:
         self.best_solution = solution
         self.best_distance = solution_distance
 
-        print(f"Solusi Awal: {solution}, Nilai Objektif: {solution_distance}")
+        print(f"Initial Solution: {solution}, Objective Value: {solution_distance}")
 
         neighbor = self.changeTwoElement(list(solution))
         neighbor_distance = 0
@@ -61,7 +62,7 @@ class SimulatedAnnealing:
             neighbor_distance += self.getDistance(neighbor[j], neighbor[j + 1])
         neighbor_distance += self.getDistance(neighbor[-1], 0)
 
-        print(f"Solusi Tukar 2 Elemen: {neighbor}, Nilai Objektif: {neighbor_distance}")
+        print(f"Solution 2 Element: {neighbor}, Objective Value: {neighbor_distance}")
 
         while temperature > self.stoppingValue:
             for i in range(self.maxIter):
@@ -82,7 +83,7 @@ class SimulatedAnnealing:
 
             temperature *= 0.8  # Cooling schedule
 
-        print(f"Solusi Optimum: {self.best_solution}, Nilai Objektif: {self.best_distance}")
+        print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
 
 # Data komponen
 distanceLibrary = {
@@ -94,10 +95,11 @@ distanceLibrary = {
     (5, 6): 36
 }
 
+varRanges = [-5, 5]
 numOfInitSolution = 5
 maxIter = 15
 stoppingValue = 0.0001
 minTemp = 0.01
 
-run = SimulatedAnnealing(distanceLibrary, numOfInitSolution, maxIter, stoppingValue, minTemp)
+run = SimulatedAnnealing(distanceLibrary, varRanges, numOfInitSolution, maxIter, stoppingValue, minTemp)
 run.mainSA()
