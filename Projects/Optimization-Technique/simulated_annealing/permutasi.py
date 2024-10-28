@@ -29,7 +29,7 @@ class SimulatedAnnealing:
 
         total_distance += self.getDistance(random_combination[-1], 0)
 
-        print(f"Solusi Awal: {random_combination}, Total Jarak: {total_distance}")
+        print(f"Solusi Awal: {random_combination}, Nilai Objektif: {total_distance}")
         return random_combination
 
     def changeTwoElement(self, neighbors):
@@ -53,6 +53,25 @@ class SimulatedAnnealing:
         solution = self.getSolution(solutionVals)
         candidate = self.getCandidate(self.varRanges)
         varRanges = self.getNewVarRanges(candidate)
+
+        while temperature > self.stoppingValue:
+            for i in range(self.maxIter):
+                candidate = self.getCandidate(varRanges)
+                varRanges = self.getNewVarRanges(candidate)
+
+                neighbor = self.getSolution(candidate)
+                deltaE = neighbor - solution
+                metropolis = exp(-deltaE / temperature)
+
+                if deltaE <= 0 or random.uniform(0,1) < metropolis:
+                    solutionVals, solution = candidate, neighbor
+            
+            if solution < self.stoppingValue and temperature <= self.minTemperature:
+                print(solution, solutionVals)
+                break
+            else:
+                temperature = 0.8 * temperature
+
 
 # Data komponen
 distanceLibrary = {
@@ -80,4 +99,4 @@ for i in range(len(changed_solution) - 1):
 
 total_distance_changed += run.getDistance(changed_solution[-1], 0)
 
-print(f"Solusi Two Element: {changed_solution}, Nilai Objektif: {total_distance_changed}")
+print(f"Solusi 2 Element: {changed_solution}, Nilai Objektif: {total_distance_changed}")
