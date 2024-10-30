@@ -13,6 +13,7 @@ class SimulatedAnnealing:
         self.minTemp = minTemp
         self.best_solution = None
         self.best_distance = float('inf')
+        self.all_solutions = []  # List to store all solutions
 
     def getDistance(self, a, b):
         if (a, b) in self.distanceLibrary:
@@ -82,10 +83,17 @@ class SimulatedAnnealing:
                 if solution_distance < self.best_distance:
                     self.best_solution, self.best_distance = solution, solution_distance
 
-            temperature *= 0.8  # Cooling schedule
-            print(neighbor)
+                # Add current solution to the list of all solutions
+                self.all_solutions.append((solution, solution_distance))
 
-            print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
+            temperature *= 0.8  # Cooling schedule
+
+        print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
+
+        # Print all solutions found
+        print("All Solutions Found:")
+        for sol, dist in self.all_solutions:
+            print(f"Solution: {sol}, Objective Value: {dist}")
 
 # Data komponen
 distanceLibrary = {
