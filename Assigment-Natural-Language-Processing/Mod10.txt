@@ -1,0 +1,23 @@
+Active Learning (subset of machine learning) is a kind of query based learning
+where the user queries for specific information based on a certain region of interest.
+
+The fundamental assumption behind the active learner algorithm concept is that an ML
+algorithm could potentially reach a higher level of accuracy while using a smaller
+number of training labels if it were allowed to choose the data it wants to learn
+from.
+
+Building CB based on AL
+Instead of storing each instance in the memory the learner can exploit from the
+hypothesis postulated by AL that user has the liberty to choose the data to learn
+from specific to the learning algorithm.
+So in comparison to regular ML algorithms where we randomly picked up the 
+instances we can employ AL to do it more smartly in an interactive approach.
+
+examples for AL
+a)Speech recognition; Accurate labeling of speech utterances is time consuming
+and require expertise, annotation at word level can take a ten times longer than 
+actual audio, and annotating phonemes can take 400 times as long,
+
+b)Document classification and filtering: Learning to classify documents or any
+kind of media requires that users label each document or media file with particular
+labels, like relevant or irrelevant
