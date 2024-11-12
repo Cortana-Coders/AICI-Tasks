@@ -84,9 +84,9 @@ class SimulatedAnnealing:
                     self.best_solution, self.best_distance = solution, solution_distance
 
             temperature *= 0.8  # Cooling schedule
-            print(neighbor)
+            # print(neighbor)
 
-            print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
+        print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
 
 # Data komponen
 distanceLibrary = {
