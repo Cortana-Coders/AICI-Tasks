@@ -23,7 +23,7 @@ class SimulatedAnnealing:
             return 0
 
     def randomSolution(self):
-        solusi = list(permutations(range(0, 7)))
+        solusi = list(permutations(range(0, 8)))
         random_combination = random.choice(solusi)
 
         total_distance = 0
@@ -97,7 +97,9 @@ class SimulatedAnnealing:
             solution_tuple = tuple(self.best_solution)
             if solution_tuple not in printed_solutions:
                 printed_solutions.add(solution_tuple)
-                print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
+                # print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
+
+        print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
 
 # Data komponen
 distanceLibrary = {
@@ -106,7 +108,8 @@ distanceLibrary = {
     (2, 3): 2, (2, 4): 3, (2, 5): 10, (2, 6): 35,
     (3, 4): 3.7, (3, 5): 2.8, (3, 6): 25,
     (4, 5): 0.9, (4, 6): 37,
-    (5, 6): 36
+    (5, 6): 36, (5, 7): 30,
+    (6, 7): 10
 }
 
 varRanges = [-5, 5]

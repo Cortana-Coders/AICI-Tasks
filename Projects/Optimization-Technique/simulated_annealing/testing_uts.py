@@ -2,6 +2,7 @@
 import random
 from itertools import permutations
 from math import exp
+import sys
 
 class SimulatedAnnealing:
     def __init__(self, distanceLibrary, varRanges, numOfInitSolution, maxIter, stoppingValue, minTemp):
@@ -23,7 +24,7 @@ class SimulatedAnnealing:
             return 0
 
     def randomSolution(self):
-        solusi = list(permutations(range(0, 7)))
+        solusi = list(permutations(range(0, 8)))
         random_combination = random.choice(solusi)
 
         total_distance = 0
@@ -37,7 +38,10 @@ class SimulatedAnnealing:
     def changeTwoElement(self, neighbors):
         twoElement = 2
         randomIndex = set()
+        # print(len(randomIndex))
+        # sys.exit()
         while len(randomIndex) < twoElement:
+
             randomIndex.add(random.randint(0, len(neighbors)-1))
         
         randomIndex = list(randomIndex)
@@ -55,7 +59,9 @@ class SimulatedAnnealing:
         return solution
 
     def mainSA(self):
+        # parameter kontrol probalitas p solusi
         temperature = 1000
+
         solution, solution_distance = self.randomSolution()
         self.best_solution = solution
         self.best_distance = solution_distance
@@ -90,23 +96,26 @@ class SimulatedAnnealing:
                     self.best_solution, self.best_distance = solution, solution_distance
 
             temperature *= 0.8  # Cooling schedule
-
-            # print(neighbor)
+            
+            
+            # print(neighbor, ", Nilai objektif: ", self.best_distance)
 
             # Cetak solusi optimal jika belum pernah dicetak
-            # solution_tuple = tuple(self.best_solution)
-            # if solution_tuple not in printed_solutions:
-            #     printed_solutions.add(solution_tuple)
-            print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
+            solution_tuple = tuple(self.best_solution)
+            if solution_tuple not in printed_solutions:
+                printed_solutions.add(solution_tuple)
+                # print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
+        print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
 
 # Data komponen
 distanceLibrary = {
-    (0, 1): 8, (0, 2): 1.8, (0, 3): 4, (0, 4): 26, (0, 5): 7, (0, 6): 36,
-    (1, 2): 5, (1, 3): 2.2, (1, 4): 5, (1, 5): 4, (1, 6): 34,
-    (2, 3): 2, (2, 4): 3, (2, 5): 10, (2, 6): 35,
-    (3, 4): 3.7, (3, 5): 2.8, (3, 6): 25,
-    (4, 5): 0.9, (4, 6): 37,
-    (5, 6): 36
+    (0, 1): 8, (0, 2): 1.8, (0, 3): 4, (0, 4): 26, (0, 5): 7, (0, 6): 36, (0,7): 4,
+    (1, 2): 5, (1, 3): 2.2, (1, 4): 5, (1, 5): 4, (1, 6): 34,(1,7): 12,
+    (2, 3): 2, (2, 4): 3, (2, 5): 10, (2, 6): 35,(2,7): 8,
+    (3, 4): 3.7, (3, 5): 2.8, (3, 6): 25,(3,7): 2,
+    (4, 5): 0.9, (4, 6): 37,(4,7):32,
+    (5, 6): 36,(5, 7): 20,
+    (6, 7): 36,
 }
 
 varRanges = [-5, 5]
