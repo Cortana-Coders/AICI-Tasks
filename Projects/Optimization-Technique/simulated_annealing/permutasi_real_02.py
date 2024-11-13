@@ -1,4 +1,4 @@
-import sys
+
 import random
 from itertools import permutations
 from math import exp
@@ -23,7 +23,7 @@ class SimulatedAnnealing:
             return 0
 
     def randomSolution(self):
-        solusi = list(permutations(range(0, 7)))
+        solusi = list(permutations(range(0, 8)))
         random_combination = random.choice(solusi)
 
         total_distance = 0
@@ -46,25 +46,31 @@ class SimulatedAnnealing:
         temp = neighbors[randomIndex[0]]
         neighbors[randomIndex[0]] = neighbors[randomIndex[1]]
         neighbors[randomIndex[1]] = temp
-
         return neighbors
+    
+    # Mencoba membuat menukar 4 element
+    def changeFourElement(self, solution):
+        idx1, idx2, idx3, idx4 = random.sample(range(len(solution)), 4)
+        solution[idx1], solution[idx2], solution[idx3], solution[idx4] = solution[idx4], solution[idx3], solution[idx2], solution[idx1]
+        return solution
 
     def mainSA(self):
         temperature = 1000
         solution, solution_distance = self.randomSolution()
         self.best_solution = solution
         self.best_distance = solution_distance
+        printed_solutions = set()
 
-        print(f"Initial Solution: {solution}, Objective Value: {solution_distance}")
+        print(f"Solusi Awal: {solution}, Nilai Objektif: {solution_distance}")
 
         neighbor = self.changeTwoElement(list(solution))
         neighbor_distance = 0
-        
+
         for j in range(len(neighbor) - 1):
             neighbor_distance += self.getDistance(neighbor[j], neighbor[j + 1])
         neighbor_distance += self.getDistance(neighbor[-1], 0)
 
-        print(f"Solution 2 Element: {neighbor}, Objective Value: {neighbor_distance}")
+        print(f"Tukar 2 Elemen: {neighbor}, Nilai Objektif: {neighbor_distance}")
 
         while temperature > self.stoppingValue:
             for i in range(self.maxIter):
@@ -84,18 +90,26 @@ class SimulatedAnnealing:
                     self.best_solution, self.best_distance = solution, solution_distance
 
             temperature *= 0.8  # Cooling schedule
+
             # print(neighbor)
 
-        print(f"Optimum Solution: {self.best_solution}, Objective Value: {self.best_distance}")
+            # Cetak solusi optimal jika belum pernah dicetak
+            solution_tuple = tuple(self.best_solution)
+            if solution_tuple not in printed_solutions:
+                printed_solutions.add(solution_tuple)
+                # print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
+
+        print(f"Solusi Optimal: {self.best_solution}, Nilai Objektif: {self.best_distance}")
 
 # Data komponen
 distanceLibrary = {
-    (0, 1): 4.4, (0, 2): 1.8, (0, 3): 3.4, (0, 4): 0.65, (0, 5): 0.70, (0, 6): 36,
-    (1, 2): 3.3, (1, 3): 2.2, (1, 4): 4.9, (1, 5): 4, (1, 6): 34,
-    (2, 3): 2, (2, 4): 2.9, (2, 5): 1.9, (2, 6): 35,
-    (3, 4): 3.7, (3, 5): 2.8, (3, 6): 35,
+    (0, 1): 8, (0, 2): 1.8, (0, 3): 4, (0, 4): 26, (0, 5): 7, (0, 6): 36,
+    (1, 2): 5, (1, 3): 2.2, (1, 4): 5, (1, 5): 4, (1, 6): 34,
+    (2, 3): 2, (2, 4): 3, (2, 5): 10, (2, 6): 35,
+    (3, 4): 3.7, (3, 5): 2.8, (3, 6): 25,
     (4, 5): 0.9, (4, 6): 37,
-    (5, 6): 36
+    (5, 6): 36, (5, 7): 30,
+    (6, 7): 10
 }
 
 varRanges = [-5, 5]
