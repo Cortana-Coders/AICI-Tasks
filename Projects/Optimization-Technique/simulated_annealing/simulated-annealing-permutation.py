@@ -27,16 +27,33 @@ class SimulatedAnnealingPermutation:
             total_distance += self.distances[solution[i] - 1][solution[i + 1] - 1]
         return total_distance
 
-    def getNeighbour(self, solution):
-        neighbour = solution[:]
-        idx = random.randint(0, len(solution) - 1)
+    # def getNeighbour(self, solution):
+    #     neighbour = solution[:]
+    #     idx = random.randint(0, len(solution) - 1)
 
-        idxList = [(idx + i) % len(solution) for i in range(4)] # Menentukan indeks rotasi dengan memperhatikan wrap-around
+    #     idxList = [(idx + i) % len(solution) for i in range(4)] # Menentukan indeks rotasi dengan memperhatikan wrap-around
 
-        for i in range(2):
-            neighbour[idxList[i]], neighbour[idxList[3 - i]] = neighbour[idxList[3 - i]], neighbour[idxList[i]]  # Balik urutan keempat elemen tersebut
+    #     for i in range(2):
+    #         neighbour[idxList[i]], neighbour[idxList[3 - i]] = neighbour[idxList[3 - i]], neighbour[idxList[i]]  # Balik urutan keempat elemen tersebut
         
-        return neighbour
+    #     return neighbour
+
+    def changeTwoElement(neighbors):
+        twoElement = 2
+        randomIndex = set() # Menggunakan set untuk menghindari duplikasi indeks
+        
+        while len(randomIndex) < twoElement:
+            randomIndex.add(random.randint(0, len(neighbors)-1))
+        
+        randomIndex = list(randomIndex) # Mengubah kembali ke list jika perlu
+        
+        # tukar kedua elemen
+        temp = neighbors[randomIndex[0]]
+        neighbors[randomIndex[0]] = neighbors[randomIndex[1]]
+        neighbors[randomIndex[1]] = temp
+
+        return neighbors
+
     
     def acceptanceProbability(self, oldCost, newCost, temperature):
         # Jika solusi baru lebih baik, terima langsung
@@ -57,7 +74,8 @@ class SimulatedAnnealingPermutation:
 
         # Simulated Annealing loop
         while temperature > self.minTemp and iteration < self.maxIter:
-            newSolution = self.getNeighbour(currentSolution)
+            # newSolution = self.getNeighbour(currentSolution)
+            newSolution = self.changeTwoElement(currentSolution)
             newCost = self.calculateTotalDistance(newSolution)            
 
             print(f"Iterasi {iteration + 1}:")
