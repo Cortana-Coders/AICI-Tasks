@@ -1,4 +1,5 @@
-import random, sys
+import random
+import sys
 
 matriks = [
     [0, 360, 185, 335, 160, 340, 334, 362, 163, 204],
@@ -32,7 +33,8 @@ parameters = {
     'rho': 0.6, 
     'antSize': 15, 
     'matriks': matriks, 
-    'maxIter': 25
+    'maxIter': 25,
+    'cityNames': cityNames
 }
 
 class AntColonyOptimizationTSP:
@@ -43,17 +45,43 @@ class AntColonyOptimizationTSP:
     # Primary Method untuk menyimpan seluruh alamt yang dikunjungi oleh setiap semut
     def ACOTSProblem(self):
         tabulist = []
-
         for iter in range(self.params['maxIter']):
-            for i in range(self.params['antSize']):
+            print(f"iterasi ke-{iter}")
+            for i in range(self.params['antSize']): # tabulist dihasilkan []..15x
                 if self.start:
                     nextCity = self.start[0]
                 else:
                     nextCity = random.randint(0, len(self.params['matriks'])-1)
                 tabulist.append([nextCity])
             print(tabulist)
-            tabulist = []
+            # tabulist = []
 
+            temp = []; city = []; pairedCity = []; matriks = self.params['matriks']
+            for i in range(len(matriks) - 1):
+                for j in range(len(tabulist)):
+                    r = random.uniform(0,1) #bangkitkan bilangan acak antara 0 dan 1
+                    # print(tabulist[j])
 
-aco = AntColonyOptimizationTSP(parameters, start = [0])
+                    for cityID in range(len(matriks)):
+                        for k in tabulist[j]:
+                            temp.append(k)
+                            temp.append(cityID)
+                        # jika tabulist[j] == banyak elemen cityID pada larik temp(lakukan penambahan elemen ke larik city)
+                        if temp.count(cityID) == len(tabulist[j]):
+                            city.append(tabulist[j][-1])
+                            city.append(cityID)
+                        # tambahkan elemen ke larik city. Menunjukan bahwa pasangan kota atau alamatnya sama. Contoh: Jogja ke Jogja
+                        else:
+                            city.append(cityID)
+                            city.append(cityID)
+
+                        pairedCity.append(city)
+                        city = []; temp = []
+                    print(pairedCity)
+                    pairedCity = []
+                sys.exit()
+
+# Start = [], titik awal berangkat setiap semut berawal di kota ke-0(jogja)
+# jika titik awal kosong, maka setiap semut akan ditugaskan ke titik awal berbeda-beda karena fungsi random di line 52(ACOTSProblem)
+aco = AntColonyOptimizationTSP(parameters, start = [])
 aco.ACOTSProblem() 
