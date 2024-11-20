@@ -82,11 +82,15 @@ class AntColonyOptimizationTSP:
                     # Panggil method getDistance dalam method utama ACOTSProblem
                     pairedDistance = self.getDistance(pairedCity)
                     pairedCity = []
+
                     # Panggil method probNextCities dalam method utama ACOTSProblem
                     probNextCities = self.getProbNextCities(pairedDistance, feromon)
-                    print(probNextCities, sum(probNextCities))
-                    print(pairedDistance)
-                    print()
+
+                    # Panggil method getNextCities dalam method utama ACOTSProblem
+                    nextCities = self.getNextCities(probNextCities, r)
+
+                    tabulist[j].append(nextCities)
+                print(tabulist)
                 # pairedDistance = []
                 sys.exit()
     
@@ -111,7 +115,7 @@ class AntColonyOptimizationTSP:
             ret.append(val)
         return ret 
     
-    # 
+    # Memberikan kembalian berupa id kota(int) yg merupakan kota berikutnya yg akan dikunjungi oleh semut.
     def getNextCities(self, probNextCities, r):
         temp = 0
         for i in range(len(probNextCities)):
