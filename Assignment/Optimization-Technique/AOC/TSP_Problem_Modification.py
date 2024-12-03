@@ -50,10 +50,8 @@ class AntColonyOptimizationTSP:
         for iter in range(self.params['maxIter']):
             print(f"iterasi ke-{iter}")
             for i in range(self.params['antSize']): # tabulist dihasilkan []..15x
-                if self.start:
-                    nextCity = self.start[0]
-                else:
-                    nextCity = random.randint(0, len(self.params['matriks'])-1)
+                # Ternary Operator
+                nextCity = self.start[0] if self.start else random.randint(0, len(self.params['matriks']) - 1)
                 tabulist.append([nextCity])
             print(tabulist)
             
@@ -146,11 +144,7 @@ class AntColonyOptimizationTSP:
     def getNextCities(self, probNextCities, r):
         temp = 0
         for i in range(len(probNextCities)):
-            if sum(probNextCities) != 0:
-                temp += (probNextCities[i] / sum(probNextCities))
-            else:
-                temp = 0
-            
+            temp += (probNextCities[i] / sum(probNextCities)) if sum(probNextCities) != 0 else 0
             if r < temp:
                 i
                 break
@@ -167,5 +161,5 @@ class AntColonyOptimizationTSP:
 
 # Start = [], titik awal berangkat setiap semut berawal di kota ke-0(jogja)
 # jika titik awal kosong, maka setiap semut akan ditugaskan ke titik awal berbeda-beda karena fungsi random di line 52(ACOTSProblem)
-aco = AntColonyOptimizationTSP(parameters, start = [3])
+aco = AntColonyOptimizationTSP(parameters, start = [])
 aco.ACOTSProblem() 
