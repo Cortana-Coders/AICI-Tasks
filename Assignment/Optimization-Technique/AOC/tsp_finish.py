@@ -4,14 +4,14 @@ from itertools import permutations
 matriks = [
     [0, 360, 185, 335, 160, 340, 334, 362, 163, 204],
     [360, 0, 293, 579, 269, 601, 583, 610, 370, 318],
-    [185, 293, 0, 405, 261, 408, 409, 202, 80.6, 21.4],
-    [335, 579, 405, 0, 313, 4, 24, 56.5, 164, 241],
-    [160, 269, 26.1, 313, 0, 383, 382, 225, 104, 45.8],
-    [340, 601, 408, 4, 383, 0, 22.5, 56.5, 164, 244],
-    [334, 583, 409, 24, 382, 22.5, 0, 75.9, 181, 336],
-    [362, 610, 202, 56.5, 225, 56.5, 75.9, 0, 120, 200],
-    [163, 370, 80.6, 164, 104, 164, 181, 120, 0, 80.9],
-    [204, 318, 21.4, 241, 45.8, 244, 336, 200, 80.9, 0]
+    [185, 293, 0, 405, 261, 408, 409, 202, 80, 21],
+    [335, 579, 405, 0, 313, 4, 24, 56, 164, 241],
+    [160, 269, 26, 313, 0, 383, 382, 225, 104, 45],
+    [340, 601, 408, 4, 383, 0, 22, 56, 164, 244],
+    [334, 583, 409, 24, 382, 22, 0, 75, 181, 336],
+    [362, 610, 202, 56, 225, 56, 75, 0, 120, 200],
+    [163, 370, 80, 164, 104, 164, 181, 120, 0, 80],
+    [204, 318, 21, 241, 45, 244, 336, 200, 80, 0]
 ]
 
 # Nama kota
@@ -33,7 +33,7 @@ parameters = {
     'rho': 0.6, # penguapan feromon(seberapa cepat feromon menguap dari jalur)
     'antSize': 15, 
     'matriks': matriks, 
-    'maxIter': 25,
+    'maxIter': 15,
     'cityNames': cityNames # daftar nama kota
 }
 
@@ -48,14 +48,14 @@ class AntColonyOptimizationTSP:
         tabulist = []; feromon = 1/len(self.params['matriks']); finalDistance = []; allDistances = []; finalResults = []; bestSolutions = [] # inisialisasi feromon
         
         for iter in range(self.params['maxIter']):
-            print(f"iterasi ke-{iter}")
+            # print(f"iterasi ke-{iter+1}")
             for i in range(self.params['antSize']): # tabulist dihasilkan []..15x
                 if self.start:
                     nextCity = self.start[0]
                 else:
                     nextCity = random.randint(0, len(self.params['matriks'])-1)
                 tabulist.append([nextCity])
-            print(tabulist)
+            # print(tabulist)
             
 
             temp = []; city = []; pairedCity = []; matriks = self.params['matriks']
@@ -86,8 +86,8 @@ class AntColonyOptimizationTSP:
                     # Panggil method getNextCities dalam method utama ACOTSProblem
                     nextCities = self.getNextCities(probNextCities, r)
                     tabulist[j].append(nextCities)
-            print(tabulist)
-            print()
+            # print(tabulist)
+            # print()
 
             for k in range(len(tabulist)):
                 for l in range(len(tabulist[k])-1):
@@ -106,11 +106,11 @@ class AntColonyOptimizationTSP:
             bestSolutions.append(min(allDistances))
             finalDistance = []; allDistances = []; tabulist = []
         shortestRoutes = finalResults[bestSolutions.index(min(bestSolutions))]
-        print(f"Rute terpendek ziarah makan wali songo: ")
-        for i in shortestRoutes[0]:
-            print(i)
-        print(shortestRoutes[0][0])
-        print(sum(shortestRoutes[1]), 'Kilometer')
+        # print(f"Rute terpendek ziarah makan wali songo: ")
+        # for i in shortestRoutes[0]:
+            # print(i)
+        # print(shortestRoutes[0][0])
+        print(sum(shortestRoutes[1]))
                 
     
     def getInitialSolution(self):
@@ -167,5 +167,6 @@ class AntColonyOptimizationTSP:
 
 # Start = [], titik awal berangkat setiap semut berawal di kota ke-0(jogja)
 # jika titik awal kosong, maka setiap semut akan ditugaskan ke titik awal berbeda-beda karena fungsi random di line 52(ACOTSProblem)
-aco = AntColonyOptimizationTSP(parameters, start = [3])
-aco.ACOTSProblem() 
+aco = AntColonyOptimizationTSP(parameters, start = [])
+for i in range(30):
+    aco.ACOTSProblem()

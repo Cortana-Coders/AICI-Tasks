@@ -31,9 +31,9 @@ cityNames = [
 parameters = {
     'Q': 100, 
     'rho': 0.6, # penguapan feromon(seberapa cepat feromon menguap dari jalur)
-    'antSize': 15, 
+    'antSize': 5, 
     'matriks': matriks, 
-    'maxIter': 25,
+    'maxIter': 30,
     'cityNames': cityNames # daftar nama kota
 }
 
